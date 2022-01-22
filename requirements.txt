@@ -1,0 +1,16 @@
+absl-py
+attrs
+dataclasses
+imutils
+mediapipe
+numpy
+opencv-python
+protobuf
+PyYAML
+pydub
+ru-core-news-md @ https://github.com/explosion/spacy-models/releases/download/ru_core_news_md-3.1.0/ru_core_news_md-3.1.0-py3-none-any.whl
+spacy
+torch==1.9.1
+torchaudio==0.9.1
+vosk
+gdown

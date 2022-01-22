@@ -60,9 +60,10 @@ class SpeechCorrector:
         self._mouth_screen = (400, 400)
         self._audio_screen = (400, 200)
         self._stats_screen = (400, 200)
+        self._text_screen = (400, 200)
         assert self._webcam_screen[0] + self._mouth_screen[0] == self.W
         assert self._mouth_screen[1] + self._audio_screen[1] + self._stats_screen[1] == self.H
-        assert self._webcam_screen[1] == self.H - 200
+        assert self._webcam_screen[1] == self.H - self._text_screen[1]
         assert self._mouth_screen[0] == self._stats_screen[0] == self._audio_screen[0]
 
     def _get_background(self, shape=None):
@@ -72,13 +73,17 @@ class SpeechCorrector:
         _back[:] = color
         return _back
 
-    def _draw_circle(self, event, x, y, flags, param):
+    def _switch_mode(self, event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDBLCLK:
             print("event")
             save_stream()
+
+            # switch levels
             self.data = GAME_DICT0 if self.data==GAME_DICT1 else GAME_DICT1
             self.FONT_SIZE = 24 if self.data == GAME_DICT1 else 54
             ta.FONT_SIZE = 24 if self.data == GAME_DICT1 else 42
+            ta.time_limit = 6 if self.data == GAME_DICT1 else 4
+
             self.word = np.random.choice(self.data)
             self.mouseX, self.mouseY = x, y
 
@@ -86,7 +91,7 @@ class SpeechCorrector:
         cap = cv2.VideoCapture(0)
         self.history_landmarks = []
         cv2.namedWindow('MedSpeech')
-        cv2.setMouseCallback('MedSpeech', self._draw_circle)
+        cv2.setMouseCallback('MedSpeech', self._switch_mode)
 
 
         with self.facemesh.FaceMesh(
@@ -133,7 +138,7 @@ class SpeechCorrector:
                         point_up = face_landmarks.landmark[13].x, face_landmarks.landmark[13].y
                         point_down = face_landmarks.landmark[14].x, face_landmarks.landmark[14].y
                         dist = get_distance(point_down, point_up)
-                        lips_color = (0, 255, 0) if dist > .04 else (42, 42, 42)  # (0, 132, 255)
+                        lips_color = (0, 255, 0) if dist > .02 else (42, 42, 42)  # (0, 132, 255)
 
                         for idx in self.landmarks_list:
                             rel_x = face_landmarks.landmark[idx].x

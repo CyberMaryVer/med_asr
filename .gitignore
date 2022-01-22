@@ -1,4 +1,8 @@
+.idea/
 venv/
 app.py
 *.whl
 *.mp4
+*.wav
+asr_utils/weights/*
+*/text.jpg
